@@ -1,6 +1,6 @@
 package com.scc.model;
 
-public record User(
+public record user(
         int id,
         String username,
         String password,

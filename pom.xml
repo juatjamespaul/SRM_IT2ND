@@ -22,9 +22,9 @@
 
         </dependency>
         <dependency>
-            <groupId>org.sl4j</groupId>
-            <artifactId>sl4j-nop</artifactId>
-            <version>1.7.36</version>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.3.0</version>
         </dependency>
     </dependencies>
 
