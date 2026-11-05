@@ -105,6 +105,48 @@ public class UserDao {
         }
     }
 
+    // ===================== NEW (update-user requirement) =====================
+
+    /** Changes only the role and the status of one user. Inputs are converted to uppercase. */
+    public boolean updateUserRoleAndStatus(int userId, String newRole, String newStatus) {
+        String sql = "UPDATE users SET role = ?, status = ? WHERE id = ?;";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, newRole.toUpperCase());
+            pstmt.setString(2, newStatus.toUpperCase());
+            pstmt.setInt(3, userId);
+            return pstmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Update failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /** Finds the id of the logged-in user (used for the self-edit restriction). Returns -1 if not found. */
+    public int getUserIdByUsername(String username) {
+        String sql = "SELECT id FROM users WHERE username = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, username);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to find user: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    // =========================================================================
+
     private User mapUser(ResultSet rs) throws SQLException {
         return new User(
                 rs.getInt("id"),
