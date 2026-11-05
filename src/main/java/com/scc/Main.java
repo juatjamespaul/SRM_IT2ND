@@ -2,21 +2,24 @@ package com.scc;
 
 import com.scc.dao.DatabaseInitializer;
 import com.scc.dao.UserDao;
+import com.scc.dao.ActivityLogDao;
 import com.scc.ui.Authentication;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+
         // 1. Initialize database
         DatabaseInitializer.initialize();
 
         // 2. Instantiate shared DAOs & utilities (one instance each)
         Scanner sc = new Scanner(System.in);
         UserDao userDao = new UserDao();
+        ActivityLogDao activityLogDao = new ActivityLogDao();
 
         // 3. Delegate everything else
-        new Authentication(userDao, sc).start();
+        new Authentication(userDao, activityLogDao, sc).start();
 
         sc.close();
     }

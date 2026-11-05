@@ -7,6 +7,7 @@ import java.sql.Statement;
 public class DatabaseInitializer {
 
     public static void initialize() {
+
         String usersTable = """
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,14 +18,27 @@ public class DatabaseInitializer {
                 );
                 """;
 
-        // Add the rest of your proposal's tables below (with FOREIGN KEY clauses), e.g.:
-        // String queueTable = "CREATE TABLE IF NOT EXISTS ...";
+        // Activity Logs Table
+        String activityLogsTable = """
+                CREATE TABLE IF NOT EXISTS activity_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    action_type TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    timestamp TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                        ON DELETE CASCADE
+                );
+                """;
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
+
             stmt.execute(usersTable);
-            // stmt.execute(queueTable);
+            stmt.execute(activityLogsTable);
+
             System.out.println("-> Database initialized.");
+
         } catch (SQLException e) {
             System.err.println("Database initialization failed: " + e.getMessage());
             System.exit(1);

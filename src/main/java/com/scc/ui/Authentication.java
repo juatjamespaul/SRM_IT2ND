@@ -1,6 +1,7 @@
 package com.scc.ui;
 
 import com.scc.dao.UserDao;
+import com.scc.dao.ActivityLogDao;
 
 import java.util.Scanner;
 
@@ -10,10 +11,12 @@ public class Authentication {
     private static final String[] ROLES = {"ADMIN", "TEACHER", "STUDENT", "STAFF"};
 
     private final UserDao userDao;
+    private final ActivityLogDao activityLogDao;
     private final Scanner sc;
 
-    public Authentication(UserDao userDao, Scanner sc) {
+    public Authentication(UserDao userDao, ActivityLogDao activityLogDao, Scanner sc) {
         this.userDao = userDao;
+        this.activityLogDao = activityLogDao;
         this.sc = sc;
     }
 
@@ -47,10 +50,12 @@ public class Authentication {
         String password = sc.nextLine();
 
         String role = userDao.loginUser(username, password);
+
         if (role == null) {
             System.out.println("Invalid credentials, or account is not yet approved.");
             return;
         }
+
         System.out.println("\nLogin successful! Role: " + role);
         routeByRole(role, username);
     }
@@ -63,9 +68,11 @@ public class Authentication {
         String password = sc.nextLine();
 
         System.out.println("Select role:");
+
         for (int i = 0; i < ROLES.length; i++) {
             System.out.printf("[%d] %s%n", i + 1, ROLES[i]);
         }
+
         System.out.print("Choice: ");
         int choice = readInt();
 
@@ -81,10 +88,10 @@ public class Authentication {
 
     private void routeByRole(String role, String username) {
         switch (role) {
-            case "ADMIN"   -> new AdminMenu(userDao, sc, username).show();
+            case "ADMIN" -> new AdminMenu(userDao, activityLogDao, sc, username).show();
             case "TEACHER" -> new TeacherMenu(userDao, sc, username).show();
             case "STUDENT" -> new StudentMenu(userDao, sc, username).show();
-            case "STAFF"   -> new StaffMenu(userDao, sc, username).show();
+            case "STAFF" -> new StaffMenu(userDao, sc, username).show();
             default -> System.out.println("No menu available for role: " + role);
         }
     }
